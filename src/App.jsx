@@ -54,49 +54,31 @@ function App() {
     setFormData(newData); //rerender dell input finale
   };
 
-  ///////////////////  TAG ////////////////////////
-  // const callbackSyncTags = (event) => {
-  //    const { name, checked } = event.target;
-  //   const newArray = checked  //creo nuovo array con elemento aggiunto o rimosso
-  //     ? [...formData.tags, name]  // Se la checkbox è selezionata, aggiungi il tag all`array
-  //     : formData.tags.filter((currElement) => currElement !== name); // Altrimenti, rimuovilo
-  //   setFormData({
-  //     ...formData,// Copia l'oggetto stato precedente
-  //     tags: newArray, //aggiorna proprieta'tags con nuovo array
-  //   });
-  // };
-
   //FUNZIONE FORM SUBMIT
   const handlePostForm = (event) => {
     event.preventDefault();
-
-    // 1 creo l'oggetto del nuovo post by coping..
-    // const newPost = {
-    //   ...formData,
-    //   //adding a unique id
-    //   id: Date.now(),
-    // };
-
-    //AXIOS - STORE
+    //I dati del form vengono inviati al backend tramite la chiamata axios.post.
     axios.post(`${apiBase}/posts`, formData).then((resp) => {
+    //Il server salva il nuovo post e restituisce la risposta con i dati del post appena salvato.
       console.log(resp)
       // 2 creo la copia dell'array posts precedente, aggiungendo il nuovo post
       const newArray = [...posts, resp.data];
-
-      // 3. aggiorno lo stato dei posts
+      // 3. L'array posts viene aggiornato con il nuovo post - setPosts sincronizza l'interfaccia utente ta con il backend
       setPosts(newArray);
-
-      // 4. Ripulisco i campi del form reser back to initial values after the post has been added.
+      // 4. Ripulisco i campi del form reset back to initial values after the post has been added.
       setFormData(initialFormData);
     })
-
-
   };
 
   //filtering out the post with the id that matches the elementToRemove (passed as a parameter).
   const removeElement = (elementToRemoveId) => {
+    //Make DELETE request to the server to remove the post
+    axios.delete(`${apiBase}/posts/${elementToRemoveId}`).then((resp)=> {
+      //Filter out the post with the matching ID locally
     const newArray = posts.filter((curpost) => curpost.id !== elementToRemoveId);
-    setPosts(newArray)
+     // Update the state with the new array (without the removed post)
+     setPosts(newArray)
+    })
   }
 
   return (
@@ -108,7 +90,6 @@ function App() {
         <section>
           {/* //FORM */}
           <form onSubmit={handlePostForm} >
-
             <div className='mb-3'>
               <label htmlFor="title">Cerca titolo articolo</label>
               <input
