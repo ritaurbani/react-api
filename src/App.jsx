@@ -14,27 +14,28 @@ function App() {
     // tags: []
   }
 
-const [posts, setPosts] = useState([])
-const [formData, setFormData] = useState(initialFormData)// object  
+  const [posts, setPosts] = useState([])
+  const [formData, setFormData] = useState(initialFormData)// object  
 
-const apiBase = "http://localhost:3000";
+  const apiBase = "http://localhost:3000";
 
-const getPosts = () => {
-  axios.get("http://localhost:3000/posts").then((resp) => {
-    console.log(resp);
-    setPosts(resp.data.posts)
-  });
-}
+  const getPosts = () => {
+    axios.get("http://localhost:3000/posts").then((resp) => {
+      console.log(resp.data);
+      setPosts(resp.data) // setPosts(resp.data.posts || [])
+    });
+  }
 
-useEffect(()=>{
-  getPosts();
-}, []);
+  //blocco di inizializzazione
+  useEffect(() => {
+    getPosts();
+  }, []);
 
   //FUNZIONE ONCHANGE aggiorna il valore dell'input passato-event(obj)
-  const handleEventOnChange = (event) => { 
+  const handleEventOnChange = (event) => {
     // const { name, type, value, checked} = event.target
     const keyToChange = event.target.name; //proprieta`nome - chiave dinamica
-    let newValue; 
+    let newValue;
     if (event.target.type === "checkbox") {
       newValue = event.target.checked;
     } else {
@@ -64,7 +65,7 @@ useEffect(()=>{
   //     tags: newArray, //aggiorna proprieta'tags con nuovo array
   //   });
   // };
-  
+
   //FUNZIONE FORM SUBMIT
   const handlePostForm = (event) => {
     event.preventDefault();
@@ -76,21 +77,22 @@ useEffect(()=>{
     //   id: Date.now(),
     // };
 
-  //AXIOS - STORE
-  axios.post(`${apiBase}/posts`, formData).then((resp) => {
-    console.log(resp)
-  })
+    //AXIOS - STORE
+    axios.post(`${apiBase}/posts`, formData).then((resp) => {
+      console.log(resp)
+      // 2 creo la copia dell'array posts precedente, aggiungendo il nuovo post
+      const newArray = [...posts, resp.data];
 
-    // 2 creo la copia dell'array posts precedente, aggiungendo il nuovo post
-    const newArray = [...posts, resp.data];
+      // 3. aggiorno lo stato dei posts
+      setPosts(newArray);
 
-    // 3. aggiorno lo stato dei posts
-    setPosts(newArray);
+      // 4. Ripulisco i campi del form reser back to initial values after the post has been added.
+      setFormData(initialFormData);
+    })
 
-    // 4. Ripulisco i campi del form reser back to initial values after the post has been added.
-    setFormData(initialFormData);
+
   };
-  
+
   //filtering out the post with the id that matches the elementToRemove (passed as a parameter).
   const removeElement = (elementToRemoveId) => {
     const newArray = posts.filter((curpost) => curpost.id !== elementToRemoveId);
@@ -148,10 +150,10 @@ useEffect(()=>{
         </section>
 
         {/* card */}
+
         <div className='row row-cols-2 row-cols-lg-3'>
           {
             posts.map((post, index) => (
-              post.published &&
               <div className='col' key={index}>
                 <Card
                   title={post.title}
@@ -161,7 +163,7 @@ useEffect(()=>{
                   // category={post.category}
                   id={post.id}
                   onDelete={() => removeElement(post.id)}
-                />      
+                />
               </div>
             ))
           }
