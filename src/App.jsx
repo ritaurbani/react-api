@@ -17,7 +17,7 @@ function App() {
 const [posts, setPosts] = useState([])
 const [formData, setFormData] = useState(initialFormData)// object  
 
-const apiBase = "localhost:3000"  //localhost:3000/posts
+const apiBase = "http://localhost:3000"  
 
 const getPosts = () => {
   axios.get(`${apiBase}/posts`).then((resp) => {
@@ -141,70 +141,6 @@ useEffect(()=>{
                 value={formData.image}
                 onChange={handleEventOnChange} />
             </div>
-
-            {/* INPUT CATEGORY
-            <div className='mb-3'>
-              <label htmlFor="category">Category:</label>
-              <select
-                type="text"
-                className='form-control'
-                id='category'
-                name='category'
-                value={formData.category}
-                onChange={handleEventOnChange}>
-                <option value="">Select a category</option>
-                <option value="technology">Fashion</option>
-                <option value="science">Science</option>
-                <option value="art">Art</option>
-                <option value="history">History</option>
-              </select>
-            </div> */}
-
-            INPUT PUBLISHED
-            {/* <div className='mb-3'>
-              <label htmlFor="published">Published</label>
-              <input
-                type="checkbox"
-                id='published'
-                name='published'
-                checked={formData.published}
-                onChange={handleEventOnChange} />
-            </div> */}
-
-            {/* Input per i checkbox tags */}
-            {/* <div>
-              <h3>Scegli tags del libro</h3>
-  
-              <label htmlFor="fantasy">
-                Fantasy
-                <input
-                  id="fantasy"
-                  type="checkbox"
-                  name="fantasy"
-                  onChange={callbackSyncTags}
-                />
-              </label>
-             
-              <label htmlFor="comedy">
-                Comedy
-                <input
-                  id="comedy"
-                  type="checkbox"
-                  name="comedy"
-                  onChange={callbackSyncTags}
-                />
-              </label>
-             
-              <label htmlFor="romance">
-                Romance
-                <input
-                  id="romance"
-                  type="checkbox"
-                  name="romance"
-                  onChange={callbackSyncTags}
-                />
-              </label>
-            </div> */}
 
             {/* //BUTTON */}
             <button type='submit' className='my-4 btn btn-success'>Submit</button>
