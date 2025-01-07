@@ -17,13 +17,13 @@ function App() {
 const [posts, setPosts] = useState([])
 const [formData, setFormData] = useState(initialFormData)// object  
 
-const apiBase = "http://localhost:3000"  
+const apiBase = "http://localhost:3000";
 
 const getPosts = () => {
-  axios.get(`${apiBase}/posts`).then((resp) => {
+  axios.get("http://localhost:3000/posts").then((resp) => {
     console.log(resp);
     setPosts(resp.data.posts)
-  })
+  });
 }
 
 useEffect(()=>{
@@ -92,8 +92,8 @@ useEffect(()=>{
   };
   
   //filtering out the post with the id that matches the elementToRemove (passed as a parameter).
-  const removeElement = (elementToRemove) => {
-    const newArray = posts.filter((curpost) => curpost.id !== elementToRemove);
+  const removeElement = (elementToRemoveId) => {
+    const newArray = posts.filter((curpost) => curpost.id !== elementToRemoveId);
     setPosts(newArray)
   }
 
@@ -160,7 +160,7 @@ useEffect(()=>{
                   // arrayTags={post.tags}
                   // category={post.category}
                   id={post.id}
-                  onDelete={(event) => removeElement(post.id)}
+                  onDelete={() => removeElement(post.id)}
                 />      
               </div>
             ))
