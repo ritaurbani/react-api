@@ -9,27 +9,48 @@ function App() {
     title: "",
     content: "",
     image: "",
+    tags: []
     // published: false,
     // category: "",
-    // tags: []
+    
   }
 
   const [posts, setPosts] = useState([])
   const [formData, setFormData] = useState(initialFormData)// object  
+  const [tags, setTags] = useState([])
+  const [filter, setFilter] = useState(null) //valore del filtro selezionato da utente
 
   const apiBase = "http://localhost:3000";
-
-  const getPosts = () => {
-    axios.get("http://localhost:3000/posts").then((resp) => {
-      console.log(resp.data);
-      setPosts(resp.data) // setPosts(resp.data.posts || [])
-    });
-  }
 
   //blocco di inizializzazione
   useEffect(() => {
     getPosts();
+  }, [filter]);
+
+  useEffect(()=>{
+    getTags()
   }, []);
+
+  //filtro i dati direttamente a livello di backend (nel server), tramite il parametro tag.
+  const getPosts = () => {
+    let url = `${apiBase}/posts`; // 
+    //// Verifica se il filtro è diverso da "all" - il codice aggiunge un parametro alla query string dell'URL. per chiedere al server di restituire solo i dati che corrispondono al filtro.(tag=art)/tag=${filter}
+    if (filter !== null && filter !== 'all') { 
+      // Se il filtro non è "all", aggiungi il parametro di query all'URL (filtra per tag)
+      url += `?tag=${filter}`; 
+    }
+    axios.get(url).then((resp) => { //Esegui la richiesta GET con l'URL costruito
+      console.log(resp.data);
+      setPosts(resp.data) // setPosts(resp.data.posts || []) //Aggiorna lo stato 'posts' con l'elenco dei posts ricevute
+    });
+  }
+
+  const getTags = () => {
+  axios.get(`${apiBase}/tags`).then((resp) => {
+  console.log(resp)
+  setTags(resp.data.tags)
+  })
+}
 
   //FUNZIONE ONCHANGE aggiorna il valore dell'input passato-event(obj)
   const handleEventOnChange = (event) => {
@@ -70,6 +91,19 @@ function App() {
     })
   };
 
+  ///////////////////  TAG ////////////////////////
+  const callbackSyncTags = (event) => {
+    const { name, checked } = event.target;
+    const newArray = checked  //creo nuovo array con elemento aggiunto o rimosso
+      ? [...formData.tags, name]  // Se la checkbox è selezionata, aggiungi il tag all`array
+      : formData.tags.filter((currElement) => currElement !== name); // Altrimenti, rimuovilo
+    setFormData({
+      ...formData,// Copia l'oggetto stato precedente
+      tags: newArray, //aggiorna proprieta'tags con nuovo array
+    });
+  };
+
+
   //filtering out the post with the id that matches the elementToRemove (passed as a parameter).
   const removeElement = (elementToRemoveId) => {
     //Make DELETE request to the server to remove the post
@@ -80,6 +114,7 @@ function App() {
      setPosts(newArray)
     })
   }
+
 
   return (
     <>
@@ -125,6 +160,23 @@ function App() {
                 onChange={handleEventOnChange} />
             </div>
 
+            {/* FILTER */}
+            <section>
+                {tags.map((curTag, index) => (
+                  <label key={index} htmlFor="viaggio">
+                    {curTag}
+                    <input
+                      id={curTag}
+                      type="checkbox"
+                      name={curTag}
+                      value={filter} onChange={(e) => { setFilter(event.target.value) }}
+                    />
+                  </label>
+                ))}
+            </section>
+
+            
+
             {/* //BUTTON */}
             <button type='submit' className='my-4 btn btn-success'>Submit</button>
           </form>
@@ -140,7 +192,7 @@ function App() {
                   title={post.title}
                   content={post.content}
                   image={post.image}
-                  // arrayTags={post.tags}
+                  arrayTags={post.tags}
                   // category={post.category}
                   id={post.id}
                   onDelete={() => removeElement(post.id)}
@@ -151,7 +203,7 @@ function App() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export default App;
