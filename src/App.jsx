@@ -9,16 +9,16 @@ function App() {
     title: "",
     content: "",
     image: "",
-    tags: []
+    tags: [],
+   
     // published: false,
-    // category: "",
-    
+    // category: "", 
   }
 
   const [posts, setPosts] = useState([])
   const [formData, setFormData] = useState(initialFormData)// object  
   const [tags, setTags] = useState([])
-  const [filter, setFilter] = useState(null) //valore del filtro selezionato da utente
+  const [filter, setFilter] = useState("all") //valore del filtro selezionato da utente
 
   const apiBase = "http://localhost:3000";
 
@@ -101,9 +101,9 @@ function App() {
       ...formData,// Copia l'oggetto stato precedente
       tags: newArray, //aggiorna proprieta'tags con nuovo array
     });
+   
   };
-
-
+  
   //filtering out the post with the id that matches the elementToRemove (passed as a parameter).
   const removeElement = (elementToRemoveId) => {
     //Make DELETE request to the server to remove the post
@@ -169,7 +169,8 @@ function App() {
                       id={curTag}
                       type="checkbox"
                       name={curTag}
-                      value={filter} onChange={(e) => { setFilter(event.target.value) }}
+                      checked={formData.tags.includes(curTag)} // Verifica se il tag è già selezionato
+                      onChange={callbackSyncTags} // Usa la funzione per aggiungere o rimuovere il tag
                     />
                   </label>
                 ))}
@@ -192,7 +193,7 @@ function App() {
                   title={post.title}
                   content={post.content}
                   image={post.image}
-                  arrayTags={post.tags}
+                  tags={post.tags}
                   // category={post.category}
                   id={post.id}
                   onDelete={() => removeElement(post.id)}

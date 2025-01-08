@@ -1,7 +1,6 @@
 
-function Card({ title, content, category, image, arrayTags, id, onDelete }) {
+function Card({ title, content, category, image, tags, id, onDelete }) {
 
-const newTagArray = arrayTags.map((tag, index) => <span key={index}> {tag}</span>)
 
     const apiBase = "http://localhost:3000";
 
@@ -13,10 +12,14 @@ const newTagArray = arrayTags.map((tag, index) => <span key={index}> {tag}</span
                 {/* <p>{category}</p> */}
                 <img src={`${apiBase}/${image}`} alt=""
                     className='w-75 p-3' />
-                <p>{newTagArray}</p>
+                    <div>
+                        {tags.map((tag,index)=> (
+                        <span key={index}>{tag}</span>
+                        ))}
+                    </div>
                 <div>
                     <button className='mx-2 btn btn-outline-success btn-sm'
-                        onClick={onDelete}>Cancel</button>
+                        onClick={onDelete}>Delete</button>
                 </div>
             </div>
         </div>
